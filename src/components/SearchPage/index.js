@@ -1,28 +1,59 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { search } from '../../BooksAPI';
+import Book from '../ListBooks/BookShelf/Book';
 
-const SearchPage = () => (
-  <div className="search-books">
-    <div className="search-books-bar">
-      <Link className="close-search" to="/">
-        Close
-      </Link>
-      <div className="search-books-input-wrapper">
-        {/*
-            NOTES: The search from BooksAPI is limited to a particular set of search terms.
-            You can find these search terms here:
-            https://github.com/udacity/reactnd-project-myreads-starter/blob/master/SEARCH_TERMS.md
+const cache = {};
 
-            However, remember that the BooksAPI.search method DOES search by title or author. So, don't worry if
-            you don't find a specific author or title. Every search is limited by search terms.
-        */}
-        <input type="text" placeholder="Search by title or author" />
+const SearchPage = () => {
+  const [searchText, setSearchText] = useState('');
+  const [bookList, setBookList] = useState([]);
+
+  useEffect(() => {
+    if (cache[searchText]) {
+      setBookList(cache[searchText]);
+      return;
+    }
+
+    if (searchText) {
+      // Preventing the execution of a request twice
+      cache[searchText] = [];
+
+      search(searchText).then(data => {
+        const results = Array.isArray(data) ? data : [];
+
+        cache[searchText] = results;
+        setBookList(results);
+      });
+    }
+  }, [searchText]);
+
+  return (
+    <div className="search-books">
+      <div className="search-books-bar">
+        <Link className="close-search" to="/">
+          Close
+        </Link>
+        <div className="search-books-input-wrapper">
+          <input
+            type="text"
+            placeholder="Search by title or author"
+            onChange={e => setSearchText(e.target.value.replace(/\W/g, ''))}
+            value={searchText}
+          />
+        </div>
+      </div>
+      <div className="search-books-results">
+        <ol className="books-grid">
+          {bookList.map(book => (
+            <li key={book.id}>
+              <Book {...book} />
+            </li>
+          ))}
+        </ol>
       </div>
     </div>
-    <div className="search-books-results">
-      <ol className="books-grid"></ol>
-    </div>
-  </div>
-);
+  );
+};
 
 export default SearchPage;
