@@ -14,10 +14,23 @@ const BooksApp = () => {
     });
   }, []);
 
-  const updateBook = (id, shelf) => {
-    update({ id }, shelf);
+  const updateBook = (book, shelf) => {
+    const isInList = bookList.find(({ id }) => book.id === id);
+    update(book, shelf);
 
-    setBookList(bookList.map(book => (book.id === id ? { ...book, shelf } : book)));
+    if (isInList) {
+      // update book shelf
+      setBookList(
+        bookList.map(singleBook => {
+          if (singleBook.id === book.id) {
+            return { ...singleBook, shelf };
+          }
+          return singleBook;
+        })
+      );
+    } else {
+      setBookList([...bookList, { ...book, shelf }]);
+    }
   };
 
   return (
