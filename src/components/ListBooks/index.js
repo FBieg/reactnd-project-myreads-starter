@@ -1,29 +1,23 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
-import { getAll } from '../../BooksAPI';
+
 import BookShelf from './BookShelf';
 
-const ListBooks = () => {
-  const [bookList, setBookList] = useState([]);
-
-  useEffect(() => {
-    getAll().then(data => {
-      setBookList([
-        {
-          shelfTitle: 'Currently Reading',
-          books: data.filter(({ shelf }) => shelf === 'currentlyReading'),
-        },
-        {
-          shelfTitle: 'Want to Read',
-          books: data.filter(({ shelf }) => shelf === 'wantToRead'),
-        },
-        {
-          shelfTitle: 'Read',
-          books: data.filter(({ shelf }) => shelf === 'read'),
-        },
-      ]);
-    });
-  }, []);
+const ListBooks = ({ bookList, updateBook }) => {
+  const shelfList = [
+    {
+      shelfTitle: 'Currently Reading',
+      books: bookList.filter(({ shelf }) => shelf === 'currentlyReading'),
+    },
+    {
+      shelfTitle: 'Want to Read',
+      books: bookList.filter(({ shelf }) => shelf === 'wantToRead'),
+    },
+    {
+      shelfTitle: 'Read',
+      books: bookList.filter(({ shelf }) => shelf === 'read'),
+    },
+  ];
 
   return (
     <div className="list-books">
@@ -31,8 +25,8 @@ const ListBooks = () => {
         <h1>MyReads</h1>
       </div>
       <div className="list-books-content">
-        {bookList.map(shelf => (
-          <BookShelf key={shelf.shelfTitle} {...shelf} />
+        {shelfList.map(shelf => (
+          <BookShelf key={shelf.shelfTitle} updateBook={updateBook} {...shelf} />
         ))}
       </div>
       <div className="open-search">

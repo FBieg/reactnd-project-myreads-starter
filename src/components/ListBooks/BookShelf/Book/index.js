@@ -8,7 +8,7 @@ const options = [
   { title: 'None', value: 'none' },
 ];
 
-const Book = ({ title, authors, shelf, imageLinks }) => (
+const Book = ({ id, title, authors, shelf, imageLinks, updateBook }) => (
   <div className="book">
     <div className="book-top">
       <div
@@ -18,12 +18,14 @@ const Book = ({ title, authors, shelf, imageLinks }) => (
         }}
       ></div>
       <div className="book-shelf-changer">
-        <select value={shelf}>
+        <select value={shelf} onChange={e => updateBook(id, e.target.value)}>
           <option value="move" disabled>
             Move to...
           </option>
           {options.map(({ title, value }) => (
-            <option key={value} value={value}>{title}</option>
+            <option key={value} value={value}>
+              {title}
+            </option>
           ))}
         </select>
       </div>
@@ -35,7 +37,7 @@ const Book = ({ title, authors, shelf, imageLinks }) => (
 
 Book.propTypes = {
   title: PropTypes.string.isRequired,
-  imageLinks: PropTypes.shape({}).isRequired,
+  imageLinks: PropTypes.shape({}),
   authors: PropTypes.arrayOf(PropTypes.string),
   shelf: PropTypes.string,
 };
@@ -43,6 +45,9 @@ Book.propTypes = {
 Book.defaultProps = {
   authors: [],
   shelf: 'none',
+  imageLinks: {
+    smallThumbnail: 'https://retohercules.com/images/no-photo-png-6.png',
+  },
 };
 
 export default Book;

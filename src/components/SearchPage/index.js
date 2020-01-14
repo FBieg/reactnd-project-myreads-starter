@@ -5,25 +5,25 @@ import Book from '../ListBooks/BookShelf/Book';
 
 const cache = {};
 
-const SearchPage = () => {
+const SearchPage = ({ bookList, updateBook }) => {
   const [searchText, setSearchText] = useState('');
-  const [bookList, setBookList] = useState([]);
+  const [shelfList, setShelfList] = useState([]);
 
   useEffect(() => {
     if (cache[searchText]) {
-      setBookList(cache[searchText]);
+      setShelfList(cache[searchText]);
       return;
     }
 
-    if (searchText) {
-      // Preventing the execution of a request twice
-      cache[searchText] = [];
+    // Preventing the execution of a request twice
+    cache[searchText] = [];
 
+    if (searchText) {
       search(searchText).then(data => {
         const results = Array.isArray(data) ? data : [];
 
         cache[searchText] = results;
-        setBookList(results);
+        setShelfList(results);
       });
     }
   }, [searchText]);
@@ -38,16 +38,19 @@ const SearchPage = () => {
           <input
             type="text"
             placeholder="Search by title or author"
-            onChange={e => setSearchText(e.target.value.replace(/\W/g, ''))}
+            onChange={e => setSearchText(e.target.value)}
             value={searchText}
           />
         </div>
       </div>
       <div className="search-books-results">
         <ol className="books-grid">
-          {bookList.map(book => (
+          {shelfList.map(book => (
             <li key={book.id}>
-              <Book {...book} />
+              <Book
+                {...(bookList.find(({ id }) => book.id === id) || book)}
+                updateBook={updateBook}
+              />
             </li>
           ))}
         </ol>
