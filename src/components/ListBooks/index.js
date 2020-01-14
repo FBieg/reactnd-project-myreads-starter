@@ -1,8 +1,9 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import BookShelf from './BookShelf';
 import bookShelfList from './bookShelfList';
 
-const ListBooks = ({ showSearchPage }) => (
+const ListBooks = () => (
   <div className="list-books">
     <div className="list-books-title">
       <h1>MyReads</h1>
@@ -13,7 +14,7 @@ const ListBooks = ({ showSearchPage }) => (
       ))}
     </div>
     <div className="open-search">
-      <button onClick={showSearchPage}>Add a book</button>
+      <Link to="/search">Add a book</Link>
     </div>
   </div>
 );
